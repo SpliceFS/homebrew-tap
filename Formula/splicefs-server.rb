@@ -21,7 +21,11 @@ class SplicefsServer < Formula
       background service; how and when it runs is up to you.
 
       Run it with:
-        splicefsd --config DIR
+        splicefsd
+      Nothing has to be configured: it listens on port 8480 with TLS and a certificate
+      it creates for itself. Settings and shares go in ~/.splicefs/server, and it keeps
+      its data in ~/.splicefs/var/server. Check your files with:
+        splicefsd config check
       The documentation is at
         https://github.com/SpliceFS/server/blob/develop/docs/configuration.md
     EOS
@@ -30,9 +34,14 @@ class SplicefsServer < Formula
   test do
     assert_match version.to_s, shell_output("#{bin}/splicefsd --version")
 
-    # An empty configuration folder must stop the program with a message about it.
+    # An empty configuration folder is a valid configuration.
     (testpath/"empty").mkpath
-    output = shell_output("#{bin}/splicefsd --config #{testpath}/empty 2>&1", 1)
-    assert_match "read server config", output
+    assert_match "ok", shell_output("#{bin}/splicefsd --config #{testpath}/empty config check")
+
+    # A file with a key the program does not know must be refused, and named.
+    (testpath/"bad/conf.d").mkpath
+    (testpath/"bad/conf.d/10-typo.yaml").write "lissten: []\n"
+    output = shell_output("#{bin}/splicefsd --config #{testpath}/bad config check 2>&1", 1)
+    assert_match "10-typo.yaml", output
   end
 end
