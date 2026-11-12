@@ -56,7 +56,7 @@ must pass before a merge.
 
 | Workflow | What it does |
 | --- | --- |
-| Tests | style, strict audit, install from `develop`, `brew test` and a service definition check, on macOS arm64, weekly as well |
+| Tests | style, strict audit, install from `develop` and `brew test`, on macOS arm64, weekly as well |
 | Security | CodeQL, and dependency review on pull requests |
 | Scorecard | OpenSSF Scorecard, published weekly and on every push |
 
