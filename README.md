@@ -15,7 +15,7 @@ Apple silicon only. The formulas do not install on Intel Macs.
 No release has been tagged yet, so the formulas build from the `develop` branch of each
 program. Install with `--HEAD`:
 
-```
+```sh
 brew install --HEAD splicefs/tap/splicefs-server
 brew install --HEAD splicefs/tap/splicefs-client
 ```
@@ -23,7 +23,7 @@ brew install --HEAD splicefs/tap/splicefs-client
 Building needs Go, which Homebrew installs as a build dependency. After the first release
 the plain commands will install the released version:
 
-```
+```sh
 brew install splicefs/tap/splicefs-server
 brew install splicefs/tap/splicefs-client
 ```
@@ -41,7 +41,7 @@ and the [client configuration](https://github.com/SpliceFS/client/blob/develop/d
 
 Then start a program as a background service:
 
-```
+```sh
 brew services start splicefs-server
 brew services start splicefs-client
 ```

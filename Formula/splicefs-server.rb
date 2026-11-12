@@ -1,5 +1,5 @@
 class SplicefsServer < Formula
-  desc "SpliceFS server for sharing folders over HTTP"
+  desc "Serves read-only folders in blocks so clients can read from several servers"
   homepage "https://splicefs.org"
   license "MIT"
   # Until the first release the formula builds from the develop branch. A release adds

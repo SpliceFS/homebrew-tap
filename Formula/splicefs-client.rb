@@ -1,5 +1,5 @@
 class SplicefsClient < Formula
-  desc "SpliceFS client that mounts SpliceFS clusters"
+  desc "Mounts a read-only folder whose files stream from several servers at once"
   homepage "https://splicefs.org"
   license "MIT"
   # Until the first release the formula builds from the develop branch. A release adds
