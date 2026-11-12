@@ -37,6 +37,10 @@ jobs:
           mkdir -p "$(brew --repository)/Library/Taps/splicefs"
           ln -s "$GITHUB_WORKSPACE" "$(brew --repository)/Library/Taps/splicefs/homebrew-tap"
           brew tap
+          # Since Homebrew 6 a tap outside Homebrew's own must be trusted before audit and
+          # test will load it. Users get the same effect for one formula by installing it
+          # with its full name.
+          brew trust splicefs/tap
       - name: Style
         run: brew style splicefs/tap
       # Strict audit of both formulas. Online checks are left out because the formulas have
