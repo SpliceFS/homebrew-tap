@@ -51,9 +51,3 @@ jobs:
         run: brew install --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
       - name: Run the formula tests
         run: brew test --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-      # The services are not started: neither program runs without a configuration. This
-      # only proves Homebrew can read the service definitions.
-      - name: Check the service definitions
-        run: |
-          brew services info splicefs-server --json
-          brew services info splicefs-client --json

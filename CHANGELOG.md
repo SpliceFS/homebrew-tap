@@ -9,6 +9,6 @@ All notable changes to this project are recorded here. The format follows
 ### Added
 
 - The formulas `splicefs-server` and `splicefs-client` for macOS on Apple silicon, built from
-  the `develop` branch of each program until the first release, each with a background
-  service for `brew services`.
+  the `develop` branch of each program until the first release. They install the commands
+  only; no background service is defined.
 - Tests, CodeQL, dependency review and OpenSSF Scorecard workflows.

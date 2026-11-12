@@ -28,38 +28,27 @@ brew install splicefs/tap/splicefs-server
 brew install splicefs/tap/splicefs-client
 ```
 
-## Configure and start
+## Run
 
-Neither program runs without a `config.yaml` in its configuration folder. The formulas
-create the folders but never a configuration file:
+The formulas install the two commands and nothing else. They are not set up as background
+services; how and when they run is up to you.
 
-- Server: `$(brew --prefix)/etc/splicefs/server/config.yaml`
-- Client: `$(brew --prefix)/etc/splicefs/client/config.yaml`
+```sh
+splicefsd --config DIR
+splicefs --config DIR mount
+```
 
 The references are the [server configuration](https://github.com/SpliceFS/server/blob/develop/docs/configuration.md)
 and the [client configuration](https://github.com/SpliceFS/client/blob/develop/docs/configuration.md).
 
-Then start a program as a background service:
-
-```sh
-brew services start splicefs-server
-brew services start splicefs-client
-```
-
-Logs are in `$(brew --prefix)/var/log/splicefsd.log` and `$(brew --prefix)/var/log/splicefs.log`.
-
-On macOS the client mounts through the built-in NFS client. No extra software is needed.
-Each mount target must be a folder you own, and it must exist before the client starts.
-Set `cache.dir` to a folder you own, because the default `/var/cache/splicefs` is not
-writable by a normal user.
+On macOS the client mounts through the built-in NFS client. No extra software is needed,
+and it does not need root.
 
 ## How the formulas are tested
 
 The Tests workflow runs on an Apple silicon macOS runner for every push, pull request and
 once a week. It makes the checkout the tap `splicefs/tap`, then runs `brew style`,
-`brew audit --strict`, `brew install --HEAD` of both formulas, `brew test` of both, and
-`brew services info` for both. The programs are not started, because they need a
-configuration.
+`brew audit --strict`, `brew install --HEAD` of both formulas and `brew test` of both.
 
 ## License
 
