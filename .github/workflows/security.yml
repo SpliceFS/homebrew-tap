@@ -28,6 +28,16 @@ jobs:
         with:
           category: /language:ruby
 
+  # Nothing that must stay private may be tracked: no compiled program, no file over
+  # 1 MiB, no name of a private machine, account or place.
+  tracked-files:
+    name: Tracked files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: No compiled program, no large file, no private name
+        run: scripts/tracked-files.sh
+
   dependency-review:
     name: Dependency review
     if: github.event_name == 'pull_request'
