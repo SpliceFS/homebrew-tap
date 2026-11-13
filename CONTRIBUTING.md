@@ -24,18 +24,14 @@ Check the Ruby syntax of a formula without Homebrew with `ruby -c Formula/<name>
 
 ## Branches
 
-SpliceFS uses the gitflow branching model.
+SpliceFS uses trunk development. There is one long-lived branch, `main`.
 
-- `main` holds released code only. Every commit on it is a release and carries a version tag.
-- `develop` is where work comes together. It is the default branch, and pull requests target it.
-- `feature/<name>` branches start from `develop` and merge back into it by pull request.
-- `release/<version>` branches start from `develop` when a release is prepared. They take only
-  fixes and the changelog, and merge into `main` and back into `develop`.
-- `hotfix/<version>` branches start from `main` for urgent fixes and merge into `main` and
-  `develop`.
-
-`main` and `develop` are protected: no direct pushes, no force pushes, no deletion, and CI
-must pass before a merge.
+- `main` is protected: no direct pushes, no force pushes, no deletion, and CI must pass before
+  a merge.
+- Every change is a pull request into `main` from its own branch. Name the branch
+  `feature/<name>`, `bug/<name>` or anything else that describes the change.
+- A pull request merges with one merge commit. Squash and fast-forward merges are off.
+- The tap is not versioned. The formulas name the versions of the programs.
 
 ## Standards
 
@@ -50,13 +46,13 @@ must pass before a merge.
 ## Commits and pull requests
 
 - One purpose per commit. The message says what changed and why.
-- A pull request targets `develop`. CI must pass: Tests, CodeQL and dependency review.
+- A pull request targets `main`. CI must pass: Tests, CodeQL and dependency review.
 
 ## What CI checks
 
 | Workflow | What it does |
 | --- | --- |
-| Tests | style, strict audit, install from `develop` and `brew test`, on macOS arm64, weekly as well |
+| Tests | style, strict audit, install from `main` and `brew test`, on macOS arm64, weekly as well |
 | Security | CodeQL, and dependency review on pull requests |
 | Scorecard | OpenSSF Scorecard, published weekly and on every push |
 

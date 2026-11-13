@@ -2,9 +2,9 @@ class SplicefsServer < Formula
   desc "Serves read-only folders in blocks so clients can read from several servers"
   homepage "https://splicefs.org"
   license "MIT"
-  # Until the first release the formula builds from the develop branch. A release adds
+  # Until the first release the formula builds from the main branch. A release adds
   # three lines here: url, sha256 and version. Nothing else changes.
-  head "https://github.com/SpliceFS/server.git", branch: "develop"
+  head "https://github.com/SpliceFS/server.git", branch: "main"
 
   depends_on "go" => :build
   depends_on arch: :arm64
@@ -27,7 +27,7 @@ class SplicefsServer < Formula
       its data in ~/.splicefs/var/server. Check your files with:
         splicefsd config check
       The documentation is at
-        https://github.com/SpliceFS/server/blob/develop/docs/configuration.md
+        https://github.com/SpliceFS/server/blob/main/docs/configuration.md
     EOS
   end
 

@@ -2,9 +2,9 @@ class SplicefsClient < Formula
   desc "Mounts a read-only folder whose files stream from several servers at once"
   homepage "https://splicefs.org"
   license "MIT"
-  # Until the first release the formula builds from the develop branch. A release adds
+  # Until the first release the formula builds from the main branch. A release adds
   # three lines here: url, sha256 and version. Nothing else changes.
-  head "https://github.com/SpliceFS/client.git", branch: "develop"
+  head "https://github.com/SpliceFS/client.git", branch: "main"
 
   depends_on "go" => :build
   depends_on arch: :arm64
@@ -30,7 +30,7 @@ class SplicefsClient < Formula
       the running program SIGHUP. Check your files with:
         splicefs config check
       The documentation is at
-        https://github.com/SpliceFS/client/blob/develop/docs/configuration.md
+        https://github.com/SpliceFS/client/blob/main/docs/configuration.md
     EOS
   end
 

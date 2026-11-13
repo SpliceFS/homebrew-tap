@@ -12,7 +12,7 @@ Apple silicon only. The formulas do not install on Intel Macs.
 
 ## Install
 
-No release has been tagged yet, so the formulas build from the `develop` branch of each
+No release has been tagged yet, so the formulas build from the `main` branch of each
 program. Install with `--HEAD`:
 
 ```sh
@@ -38,8 +38,8 @@ splicefsd --config DIR
 splicefs --config DIR mount
 ```
 
-The references are the [server configuration](https://github.com/SpliceFS/server/blob/develop/docs/configuration.md)
-and the [client configuration](https://github.com/SpliceFS/client/blob/develop/docs/configuration.md).
+The references are the [server configuration](https://github.com/SpliceFS/server/blob/main/docs/configuration.md)
+and the [client configuration](https://github.com/SpliceFS/client/blob/main/docs/configuration.md).
 
 On macOS the client mounts through the built-in NFS client. No extra software is needed,
 and it does not need root.
