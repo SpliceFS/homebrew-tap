@@ -2,10 +2,10 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
   schedule:
-    # Weekly, because Homebrew, Go and the develop branches of the programs change
+    # Weekly, because Homebrew, Go and the main branches of the programs change
     # underneath an unchanged formula. An odd minute, when scheduled runs are least
     # likely to be delayed or dropped.
     - cron: "17 7 * * 4"
@@ -47,13 +47,7 @@ jobs:
       # no release archive yet.
       - name: Audit
         run: brew audit --strict splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-      - name: Install both from the develop branches
+      - name: Install both from the main branches
         run: brew install --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
       - name: Run the formula tests
         run: brew test --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-      # The services are not started: neither program runs without a configuration. This
-      # only proves Homebrew can read the service definitions.
-      - name: Check the service definitions
-        run: |
-          brew services info splicefs-server --json
-          brew services info splicefs-client --json

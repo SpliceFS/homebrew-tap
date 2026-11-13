@@ -2,9 +2,9 @@ class SplicefsServer < Formula
   desc "Serves read-only folders in blocks so clients can read from several servers"
   homepage "https://splicefs.org"
   license "MIT"
-  # Until the first release the formula builds from the develop branch. A release adds
+  # Until the first release the formula builds from the main branch. A release adds
   # three lines here: url, sha256 and version. Nothing else changes.
-  head "https://github.com/SpliceFS/server.git", branch: "develop"
+  head "https://github.com/SpliceFS/server.git", branch: "main"
 
   depends_on "go" => :build
   depends_on arch: :arm64
@@ -13,35 +13,35 @@ class SplicefsServer < Formula
   def install
     ldflags = "-s -w -X github.com/SpliceFS/server/internal/version.version=#{version}"
     system "go", "build", *std_go_args(ldflags: ldflags, output: bin/"splicefsd"), "./cmd/splicefsd"
-    (etc/"splicefs/server").mkpath
   end
 
   def caveats
     <<~EOS
-      The server does not start until it has a configuration. Create
-        #{etc}/splicefs/server/config.yaml
-      The configuration reference is at
-        https://github.com/SpliceFS/server/blob/develop/docs/configuration.md
+      This installs the command splicefsd and nothing else. It is not set up as a
+      background service; how and when it runs is up to you.
 
-      Then start the server with:
-        brew services start splicefs-server
-      The log is #{var}/log/splicefsd.log.
+      Run it with:
+        splicefsd
+      Nothing has to be configured: it listens on port 8480 with TLS and a certificate
+      it creates for itself. Settings and shares go in ~/.splicefs/server, and it keeps
+      its data in ~/.splicefs/var/server. Check your files with:
+        splicefsd config check
+      The documentation is at
+        https://github.com/SpliceFS/server/blob/main/docs/configuration.md
     EOS
-  end
-
-  service do
-    run [opt_bin/"splicefsd", "--config", etc/"splicefs/server"]
-    keep_alive crashed: true
-    log_path var/"log/splicefsd.log"
-    error_log_path var/"log/splicefsd.log"
   end
 
   test do
     assert_match version.to_s, shell_output("#{bin}/splicefsd --version")
 
-    # An empty configuration folder must stop the program with a message about it.
+    # An empty configuration folder is a valid configuration.
     (testpath/"empty").mkpath
-    output = shell_output("#{bin}/splicefsd --config #{testpath}/empty 2>&1", 1)
-    assert_match "read server config", output
+    assert_match "ok", shell_output("#{bin}/splicefsd --config #{testpath}/empty config check")
+
+    # A file with a key the program does not know must be refused, and named.
+    (testpath/"bad/conf.d").mkpath
+    (testpath/"bad/conf.d/10-typo.yaml").write "lissten: []\n"
+    output = shell_output("#{bin}/splicefsd --config #{testpath}/bad config check 2>&1", 1)
+    assert_match "10-typo.yaml", output
   end
 end
