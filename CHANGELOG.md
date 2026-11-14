@@ -8,10 +8,14 @@ All notable changes to this project are recorded here. The format follows
 
 ### Added
 
-- The formulas `splicefs-server` and `splicefs-client` for macOS on Apple silicon, built from
-  the `main` branch of each program until the first release. They install the commands
-  only; no background service is defined.
+- The formulas `splicefs-server` and `splicefs-client` for macOS on Apple silicon. They
+  install the commands only; no background service is defined.
 - Tests, CodeQL, dependency review and OpenSSF Scorecard workflows.
 - Trunk development: one branch, `main`.
 - `make check` fails when a tracked file names a private machine, account or place, and the
   ignore rules cover programs built in place, editor leftovers and disk images.
+
+### Changed
+
+- The formulas install the released versions of the programs, not the `main` branch, and are
+  updated automatically when a program is released. `--HEAD` still builds the `main` branch.

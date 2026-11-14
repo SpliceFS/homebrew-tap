@@ -12,21 +12,14 @@ Apple silicon only. The formulas do not install on Intel Macs.
 
 ## Install
 
-No release has been tagged yet, so the formulas build from the `main` branch of each
-program. Install with `--HEAD`:
-
-```sh
-brew install --HEAD splicefs/tap/splicefs-server
-brew install --HEAD splicefs/tap/splicefs-client
-```
-
-Building needs Go, which Homebrew installs as a build dependency. After the first release
-the plain commands will install the released version:
-
 ```sh
 brew install splicefs/tap/splicefs-server
 brew install splicefs/tap/splicefs-client
 ```
+
+The formulas install the latest released version of each program, and follow each new
+release automatically. Building needs Go, which Homebrew installs as a build dependency.
+To build the `main` branch of a program instead, add `--HEAD` to the command.
 
 ## Run
 
@@ -48,7 +41,7 @@ and it does not need root.
 
 The Tests workflow runs on an Apple silicon macOS runner for every push, pull request and
 once a week. It makes the checkout the tap `splicefs/tap`, then runs `brew style`,
-`brew audit --strict`, `brew install --HEAD` of both formulas and `brew test` of both.
+`brew audit --strict`, `brew install` of both formulas and `brew test` of both.
 
 ## License
 
