@@ -1,0 +1,78 @@
+name: Update formulas
+
+on:
+  # Sent by the release workflows of the two programs when a release is published.
+  repository_dispatch:
+    types: [release-published]
+  # For a manual run, for example after a failed one.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-formulas
+  # Two releases close together are handled one after the other. Cancelling a run in the
+  # middle of a push could leave a branch without its pull request.
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update the formulas to the newest releases
+    runs-on: ubuntu-latest
+    steps:
+      # The bot's token is used for everything here, not the workflow's own. A pull request
+      # made with the workflow's own token starts no checks, so the Tests workflow would
+      # never run and the merge could never go through. The checkout keeps the token, and
+      # the push below uses it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ secrets.MERGE_BOT_TOKEN }}
+      - name: Rewrite the formulas
+        run: sh scripts/update-formulas.sh
+        env:
+          GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
+      - name: Open a pull request that merges when the Tests workflow passes
+        env:
+          GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
+          GIT_AUTHOR_NAME: splicefs-bot
+          GIT_AUTHOR_EMAIL: bot@splicefs.org
+          GIT_COMMITTER_NAME: splicefs-bot
+          GIT_COMMITTER_EMAIL: bot@splicefs.org
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "The formulas already install the newest releases. Nothing to do."
+            exit 0
+          fi
+
+          # The versions are read back from the formulas, so the branch and the message
+          # say what the formulas really install.
+          server_tag="$(sed -n 's|^  url ".*/\(v[0-9][0-9.]*\)\.tar\.gz"$|\1|p' Formula/splicefs-server.rb)"
+          client_tag="$(sed -n 's|^  url ".*/\(v[0-9][0-9.]*\)\.tar\.gz"$|\1|p' Formula/splicefs-client.rb)"
+          branch="release/server-${server_tag}-client-${client_tag}"
+          message="Install server ${server_tag#v} and client ${client_tag#v}"
+
+          git switch --create "${branch}"
+          git add Formula
+          git commit --message "${message}"
+          # A rerun for the same versions replaces the branch, and so updates its pull request.
+          git push --force origin "${branch}"
+
+          # A newer release replaces an older pull request that has not merged yet.
+          gh pr list --state open --limit 100 --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("release/")) | "\(.number) \(.headRefName)"' |
+            while read -r number head; do
+              if [ "${head}" != "${branch}" ]; then
+                gh pr close "${number}" --delete-branch
+              fi
+            done
+
+          number="$(gh pr list --head "${branch}" --state open --json number --jq '.[].number')"
+          if [ -z "${number}" ]; then
+            gh pr create --base main --head "${branch}" --title "${message}" \
+              --body "The formulas now install server ${server_tag#v} and client ${client_tag#v}.
+
+          The Tests workflow installs and tests both on macOS before this merges."
+            number="$(gh pr list --head "${branch}" --state open --json number --jq '.[].number')"
+          fi
+          gh pr merge "${number}" --merge --auto

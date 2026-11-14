@@ -14,10 +14,10 @@ The formulas are tested only by the Tests workflow, which needs macOS on Apple s
 check a change on your own Mac, tap a clone of this repository and run what the workflow runs:
 
 ```sh
-brew style splicefs/tap
+brew style splicefs/tap/splicefs-server splicefs/tap/splicefs-client
 brew audit --strict splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-brew install --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-brew test --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+brew install splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+brew test splicefs/tap/splicefs-server splicefs/tap/splicefs-client
 ```
 
 Check the Ruby syntax of a formula without Homebrew with `ruby -c Formula/<name>.rb`.
@@ -52,14 +52,14 @@ SpliceFS uses trunk development. There is one long-lived branch, `main`.
 
 | Workflow | What it does |
 | --- | --- |
-| Tests | style, strict audit, install from `main` and `brew test`, on macOS arm64, weekly as well |
+| Tests | style, strict audit, install of the released versions and `brew test`, on macOS arm64, weekly as well |
 | Security | CodeQL, and dependency review on pull requests |
 | Scorecard | OpenSSF Scorecard, published weekly and on every push |
 
 ## Releases
 
-When a program is tagged, a release job adds `url`, `sha256` and `version` to its formula.
-Nothing else in the formula changes.
+When a program is released, `scripts/update-formulas.sh` rewrites the `url` and `sha256`
+lines of its formula. Nothing else in the formula changes.
 
 ## License
 

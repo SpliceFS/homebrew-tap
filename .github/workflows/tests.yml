@@ -5,9 +5,8 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    # Weekly, because Homebrew, Go and the main branches of the programs change
-    # underneath an unchanged formula. An odd minute, when scheduled runs are least
-    # likely to be delayed or dropped.
+    # Weekly, because Homebrew and Go change underneath an unchanged formula. An odd
+    # minute, when scheduled runs are least likely to be delayed or dropped.
     - cron: "17 7 * * 4"
 
 permissions:
@@ -41,13 +40,17 @@ jobs:
           # test will load it. Users get the same effect for one formula by installing it
           # with its full name.
           brew trust splicefs/tap
+      # Only the formulas are named. For a whole tap Homebrew also checks every shell script
+      # in it against its own Bash style, and the scripts here are plain sh, checked with
+      # ShellCheck by the Scripts workflow.
       - name: Style
-        run: brew style splicefs/tap
-      # Strict audit of both formulas. Online checks are left out because the formulas have
-      # no release archive yet.
+        run: brew style splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+      # Strict audit of both formulas. Online checks are left out so the audit does not
+      # depend on the network; the install step below downloads the release archives and
+      # checks their sha256.
       - name: Audit
         run: brew audit --strict splicefs/tap/splicefs-server splicefs/tap/splicefs-client
-      - name: Install both from the main branches
-        run: brew install --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+      - name: Install both released versions
+        run: brew install splicefs/tap/splicefs-server splicefs/tap/splicefs-client
       - name: Run the formula tests
-        run: brew test --HEAD splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+        run: brew test splicefs/tap/splicefs-server splicefs/tap/splicefs-client

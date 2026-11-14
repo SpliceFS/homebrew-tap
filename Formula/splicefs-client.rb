@@ -1,9 +1,11 @@
 class SplicefsClient < Formula
   desc "Mounts a read-only folder whose files stream from several servers at once"
   homepage "https://splicefs.org"
+  # The two lines url and sha256 are rewritten by scripts/update-formulas.sh when a
+  # program is released. Do not edit them by hand.
+  url "https://github.com/SpliceFS/client/archive/refs/tags/v0.5.0.tar.gz"
+  sha256 "b1a827e7538689669d6a1349abf1a8bf9b7700f13363c45380270cd863fda708"
   license "MIT"
-  # Until the first release the formula builds from the main branch. A release adds
-  # three lines here: url, sha256 and version. Nothing else changes.
   head "https://github.com/SpliceFS/client.git", branch: "main"
 
   depends_on "go" => :build
