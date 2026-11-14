@@ -14,7 +14,7 @@ The formulas are tested only by the Tests workflow, which needs macOS on Apple s
 check a change on your own Mac, tap a clone of this repository and run what the workflow runs:
 
 ```sh
-brew style splicefs/tap
+brew style splicefs/tap/splicefs-server splicefs/tap/splicefs-client
 brew audit --strict splicefs/tap/splicefs-server splicefs/tap/splicefs-client
 brew install splicefs/tap/splicefs-server splicefs/tap/splicefs-client
 brew test splicefs/tap/splicefs-server splicefs/tap/splicefs-client
