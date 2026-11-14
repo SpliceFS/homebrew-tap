@@ -54,3 +54,16 @@ jobs:
         run: brew install splicefs/tap/splicefs-server splicefs/tap/splicefs-client
       - name: Run the formula tests
         run: brew test splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+
+  # A failed run of this workflow opens an issue assigned to the account in the repository
+  # variable ALERT_ASSIGNEE, so that someone gets an email; GitHub sends none for runs the
+  # bots start. Pull requests are left out: their author sees the failed check there.
+  alert:
+    name: Report a failure
+    needs: [formulas]
+    if: ${{ failure() && github.event_name != 'pull_request' }}
+    permissions:
+      issues: write
+    uses: SpliceFS/.github/.github/workflows/report-failure-v1.yml@main
+    with:
+      assignee: ${{ vars.ALERT_ASSIGNEE }}
