@@ -1,0 +1,69 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly, because Homebrew and Go change underneath an unchanged formula. An odd
+    # minute, when scheduled runs are least likely to be delayed or dropped.
+    - cron: "17 7 * * 4"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # The runner's Homebrew is recent enough. An update and a cleanup only cost minutes.
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
+
+jobs:
+  formulas:
+    name: Formulas (macOS arm64)
+    # macos-latest is an Apple silicon runner, the only platform the formulas support.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Homebrew finds a tap as a folder under its Taps directory. A symlink to the
+      # checkout makes the tap splicefs/tap without a clone from the network, so the
+      # formulas under test are the ones in this commit.
+      - name: Make this checkout the tap splicefs/tap
+        run: |
+          mkdir -p "$(brew --repository)/Library/Taps/splicefs"
+          ln -s "$GITHUB_WORKSPACE" "$(brew --repository)/Library/Taps/splicefs/homebrew-tap"
+          brew tap
+          # Since Homebrew 6 a tap outside Homebrew's own must be trusted before audit and
+          # test will load it. Users get the same effect for one formula by installing it
+          # with its full name.
+          brew trust splicefs/tap
+      # Only the formulas are named. For a whole tap Homebrew also checks every shell script
+      # in it against its own Bash style, and the scripts here are plain sh, checked with
+      # ShellCheck by the Scripts workflow.
+      - name: Style
+        run: brew style splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+      # Strict audit of both formulas. Online checks are left out so the audit does not
+      # depend on the network; the install step below downloads the release archives and
+      # checks their sha256.
+      - name: Audit
+        run: brew audit --strict splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+      - name: Install both released versions
+        run: brew install splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+      - name: Run the formula tests
+        run: brew test splicefs/tap/splicefs-server splicefs/tap/splicefs-client
+
+  # A failed run of this workflow opens an issue assigned to the account in the repository
+  # variable ALERT_ASSIGNEE, so that someone gets an email; GitHub sends none for runs the
+  # bots start. Pull requests are left out: their author sees the failed check there.
+  alert:
+    name: Report a failure
+    needs: [formulas]
+    if: ${{ failure() && github.event_name != 'pull_request' }}
+    permissions:
+      issues: write
+    uses: SpliceFS/.github/.github/workflows/report-failure-v1.yml@main
+    with:
+      assignee: ${{ vars.ALERT_ASSIGNEE }}
