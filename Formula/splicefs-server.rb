@@ -3,8 +3,8 @@ class SplicefsServer < Formula
   homepage "https://splicefs.org"
   # The two lines url and sha256 are rewritten by scripts/update-formulas.sh when a
   # program is released. Do not edit them by hand.
-  url "https://github.com/SpliceFS/server/archive/refs/tags/v0.5.21.tar.gz"
-  sha256 "0ac0407fe376538114d2d011d626b5ad58c1d911f733545a388dfcd5ce1cd38b"
+  url "https://github.com/SpliceFS/server/archive/refs/tags/v0.5.22.tar.gz"
+  sha256 "96b40186cfb13b4de63b606fdd0ab80ae2b8f66a2ab65124223b3fdc513c84f3"
   license "MIT"
   head "https://github.com/SpliceFS/server.git", branch: "main"
 
