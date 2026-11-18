@@ -17,5 +17,8 @@ All notable changes to this project are recorded here. The format follows
 
 ### Changed
 
+- Each formula builds and installs both programs of its project: `splicefsd` and
+  `splicefsdctl` for the server, `splicefs` and `splicefsctl` for the client. The formula
+  tests run `--version` of each.
 - The formulas install the released versions of the programs, not the `main` branch, and are
   updated automatically when a program is released. `--HEAD` still builds the `main` branch.

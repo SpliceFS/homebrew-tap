@@ -12,15 +12,20 @@ class SplicefsServer < Formula
   depends_on arch: :arm64
   depends_on :macos
 
+  # The server and its utility program, each built from the folder of the same name in cmd.
+  PROGRAMS = %w[splicefsd splicefsdctl].freeze
+
   def install
     ldflags = "-s -w -X github.com/SpliceFS/server/internal/version.version=#{version}"
-    system "go", "build", *std_go_args(ldflags: ldflags, output: bin/"splicefsd"), "./cmd/splicefsd"
+    PROGRAMS.each do |program|
+      system "go", "build", *std_go_args(ldflags: ldflags, output: bin/program), "./cmd/#{program}"
+    end
   end
 
   def caveats
     <<~EOS
-      This installs the command splicefsd and nothing else. It is not set up as a
-      background service; how and when it runs is up to you.
+      This installs the commands splicefsd and splicefsdctl and nothing else. They are not
+      set up as a background service; how and when they run is up to you.
 
       Run it with:
         splicefsd
@@ -28,13 +33,16 @@ class SplicefsServer < Formula
       it creates for itself. Settings and shares go in ~/.splicefs/server, and it keeps
       its data in ~/.splicefs/var/server. Check your files with:
         splicefsd config check
+      splicefsdctl is the utility program for jobs you run by hand, like hash-password.
       The documentation is at
         https://github.com/SpliceFS/server/blob/main/docs/configuration.md
     EOS
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/splicefsd --version")
+    PROGRAMS.each do |program|
+      assert_match version.to_s, shell_output("#{bin}/#{program} --version")
+    end
 
     # An empty configuration folder is a valid configuration.
     (testpath/"empty").mkpath
