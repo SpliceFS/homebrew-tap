@@ -12,15 +12,20 @@ class SplicefsClient < Formula
   depends_on arch: :arm64
   depends_on :macos
 
+  # The client and its utility program, each built from the folder of the same name in cmd.
+  PROGRAMS = %w[splicefs splicefsctl].freeze
+
   def install
     ldflags = "-s -w -X github.com/SpliceFS/client/internal/version.version=#{version}"
-    system "go", "build", *std_go_args(ldflags: ldflags, output: bin/"splicefs"), "./cmd/splicefs"
+    PROGRAMS.each do |program|
+      system "go", "build", *std_go_args(ldflags: ldflags, output: bin/program), "./cmd/#{program}"
+    end
   end
 
   def caveats
     <<~EOS
-      This installs the command splicefs and nothing else. It is not set up as a
-      background service; how and when it runs is up to you.
+      This installs the commands splicefs and splicefsctl and nothing else. They are not
+      set up as a background service; how and when they run is up to you.
 
       On macOS the client mounts through the built-in NFS client. No extra software is
       needed, and it does not need root.
@@ -31,13 +36,16 @@ class SplicefsClient < Formula
       are files in ~/.splicefs/client (clusters.d and mounts.d); after a change, send
       the running program SIGHUP. Check your files with:
         splicefs config check
+      splicefsctl is the utility program: it unmounts and shows the client's status.
       The documentation is at
         https://github.com/SpliceFS/client/blob/main/docs/configuration.md
     EOS
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/splicefs --version")
+    PROGRAMS.each do |program|
+      assert_match version.to_s, shell_output("#{bin}/#{program} --version")
+    end
 
     # An empty configuration folder is a valid configuration.
     (testpath/"empty").mkpath

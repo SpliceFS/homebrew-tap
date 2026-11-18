@@ -6,7 +6,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 The Homebrew formulas for [SpliceFS](https://splicefs.org) on macOS: `splicefs-server`
-(the program `splicefsd`) and `splicefs-client` (the program `splicefs`).
+(the programs `splicefsd` and `splicefsdctl`) and `splicefs-client` (the programs `splicefs`
+and `splicefsctl`).
 
 Apple silicon only. The formulas do not install on Intel Macs.
 
@@ -23,8 +24,9 @@ To build the `main` branch of a program instead, add `--HEAD` to the command.
 
 ## Run
 
-The formulas install the two commands and nothing else. They are not set up as background
-services; how and when they run is up to you.
+The formulas install the programs of each project and nothing else. They are not set up as
+background services; how and when they run is up to you. `splicefsdctl` and `splicefsctl`
+are the utility programs: they do jobs you run by hand and serve nothing.
 
 ```sh
 splicefsd --config DIR
