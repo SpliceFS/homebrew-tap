@@ -1,4 +1,5 @@
 name: Update formulas
+# Every job has a time limit: 3 times its longest run, so a hang fails in minutes.
 
 on:
   # Sent by the release workflows of the two programs when a release is published.
@@ -20,6 +21,7 @@ jobs:
   update:
     name: Update the formulas to the newest releases
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       # The bot's token is used for everything here, not the workflow's own. A pull request
       # made with the workflow's own token starts no checks, so the Tests workflow would

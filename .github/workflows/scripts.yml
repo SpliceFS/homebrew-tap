@@ -1,4 +1,5 @@
 name: Scripts
+# Every job has a time limit: 3 times its longest run, so a hang fails in minutes.
 
 on:
   push:
@@ -12,10 +13,14 @@ jobs:
   scripts:
     name: Shell scripts
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Test the update script
         run: sh scripts/update-formulas-test.sh
+      # A job without timeout-minutes would run for 6 hours if it hung.
+      - name: Test that every job has a time limit
+        run: sh scripts/workflow-timeout-test.sh
       # ShellCheck is on the runner image. Every optional check is on.
       - name: ShellCheck
         run: shellcheck --shell=sh -o all scripts/*.sh
