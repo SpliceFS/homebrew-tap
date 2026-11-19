@@ -1,4 +1,5 @@
 name: Scripts
+# Every job has a time limit: 3 times its longest run, so a hang fails in minutes.
 
 on:
   push:
@@ -12,6 +13,7 @@ jobs:
   scripts:
     name: Shell scripts
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Test the update script
